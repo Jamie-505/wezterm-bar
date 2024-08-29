@@ -258,18 +258,20 @@ wezterm.on('format-tab-title', function(tab, tabs, _panes, conf, _hover, _max_wi
     pane_count = numberStyle(count, C.tabs.pane_count_style)
   end
 
-  local index_i
-  if C.tabs.numerals == 'roman' then
-    index_i = roman_numerals[tab.tab_index + 1]
-  else
-    index_i = tab.tab_index + 1
-  end
+  local index = ''
+  if C.tabs.numerals then
+    local index_i
+    if C.tabs.numerals == 'roman' then
+      index_i = roman_numerals[tab.tab_index + 1]
+    else
+      index_i = tab.tab_index + 1
+    end
 
-  local index
-  if tab.is_active then
-    index = string.format('%s%s%s ', C.tabs.brackets.active[1], index_i, C.tabs.brackets.active[2])
-  else
-    index = string.format('%s%s%s ', C.tabs.brackets.inactive[1], index_i, C.tabs.brackets.inactive[2])
+    if tab.is_active then
+      index = string.format('%s%s%s ', C.tabs.brackets.active[1], index_i, C.tabs.brackets.active[2])
+    else
+      index = string.format('%s%s%s ', C.tabs.brackets.inactive[1], index_i, C.tabs.brackets.inactive[2])
+    end
   end
 
   -- start and end hardcoded numbers are the Powerline + " " padding
@@ -366,7 +368,7 @@ wezterm.on('update-status', function(window, pane)
       { Text = C.div.r },
       { Background = { Color = palette.ansi[5] } },
       { Foreground = { Color = palette.tab_bar.background } },
-      { Text = ' ' .. right_status .. ' '},
+      { Text = ' ' .. right_status .. ' ' },
     }))
   end
 end)
