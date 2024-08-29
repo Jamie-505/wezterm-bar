@@ -30,9 +30,8 @@ local config = {
       inactive = { '', ':' },
     },
   },
-  clock = {
+  workspace_info = {
     enabled = true,
-    format = '%H:%M',
   },
 }
 
@@ -113,9 +112,8 @@ M.apply_to_config = function(c, opts)
     },
   }
 
-  C.clock = {
-    enabled = config.clock.enabled,
-    format = config.clock.format,
+  C.workspace_info = {
+    enabled = config.workspace_info.enabled,
   }
 
   -- set the right-hand padding to 0 spaces, if the rounded style is active
@@ -294,7 +292,7 @@ wezterm.on('format-tab-title', function(tab, tabs, _panes, conf, _hover, _max_wi
   }
 end)
 
-wezterm.on('update-status', function(window, _pane)
+wezterm.on('update-status', function(window, pane)
   local active_kt = window:active_key_table() ~= nil
   local show = C.leader.enabled or (active_kt and C.mode.enabled)
   if not show then
@@ -348,12 +346,20 @@ wezterm.on('update-status', function(window, _pane)
 
   window:set_left_status(leader .. mode .. divider)
 
-  if C.clock.enabled then
-    local time = wezterm.time.now():format(C.clock.format)
+  if C.workspace_info.enabled then
+    local right_status = window:active_workspace()
+    local domain = pane:get_domain_name()
+    if domain ~= 'local' then
+      right_status = right_status .. ' @ ' .. pane:get_domain_name() .. ' '
+    end
+
     window:set_right_status(wezterm.format({
-      { Background = { Color = palette.tab_bar.background } },
-      { Foreground = { Color = palette.ansi[6] } },
-      { Text = time },
+      { Foreground = { Color = palette.tab_bar.background } },
+      { Background = { Color = palette.ansi[5] } },
+      { Text = C.div.r },
+      { Background = { Color = palette.ansi[5] } },
+      { Foreground = { Color = palette.tab_bar.background } },
+      { Text = ' ' .. right_status .. ' '},
     }))
   end
 end)
