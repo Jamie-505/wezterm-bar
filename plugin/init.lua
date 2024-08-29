@@ -88,6 +88,7 @@ M.apply_to_config = function(c, opts)
   }
 
   if config.dividers then
+    C.dividers = config.dividers
     C.div.l = dividers[config.dividers].left
     C.div.r = dividers[config.dividers].right
   end
@@ -362,14 +363,25 @@ wezterm.on('update-status', function(window, pane)
       right_status = right_status .. ' @ ' .. pane:get_domain_name() .. ' '
     end
 
-    window:set_right_status(wezterm.format({
-      { Foreground = { Color = palette.tab_bar.background } },
-      { Background = { Color = palette.ansi[5] } },
-      { Text = C.div.r },
-      { Background = { Color = palette.ansi[5] } },
-      { Foreground = { Color = palette.tab_bar.background } },
-      { Text = ' ' .. right_status .. ' ' },
-    }))
+    if C.dividers == 'rounded' then
+      window:set_right_status(wezterm.format({
+        { Background = { Color = palette.tab_bar.background } },
+        { Foreground = { Color = palette.ansi[5] } },
+        { Text = C.div.l },
+        { Background = { Color = palette.ansi[5] } },
+        { Foreground = { Color = palette.tab_bar.background } },
+        { Text = right_status .. ' ' },
+      }))
+    else
+      window:set_right_status(wezterm.format({
+        { Foreground = { Color = palette.tab_bar.background } },
+        { Background = { Color = palette.ansi[5] } },
+        { Text = C.div.r },
+        { Background = { Color = palette.ansi[5] } },
+        { Foreground = { Color = palette.tab_bar.background } },
+        { Text = ' ' .. right_status .. ' ' },
+      }))
+    end
   end
 end)
 
