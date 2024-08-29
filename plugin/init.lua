@@ -183,6 +183,13 @@ local roman_numerals = {
   'Ⅻ',
 }
 
+local function get_current_working_dir(pane)
+  local current_dir = pane and pane.current_working_dir or { file_path = '' }
+  local HOME_DIR = os.getenv('HOME')
+
+  return current_dir.file_path == HOME_DIR and '~' or string.gsub(current_dir.file_path, '(.*[/\\])(.*)', '%2')
+end
+
 -- custom tab bar
 wezterm.on('format-tab-title', function(tab, tabs, _panes, conf, _hover, _max_width)
   local colours = conf.resolved_palette.tab_bar
@@ -271,7 +278,7 @@ wezterm.on('format-tab-title', function(tab, tabs, _panes, conf, _hover, _max_wi
   -- prefer manually renamed title over active pan title
   local tabtitle = tab.tab_title
   if #tabtitle <= 0 then
-    tabtitle = tab.active_pane.title
+    tabtitle = get_current_working_dir(tab.active_pane)
   end
 
   local width = conf.tab_max_width - fillerwidth - 1
